@@ -1,4 +1,4 @@
-# Scrapy settings for tutorial project
+# Scrapy settings for playweb project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,14 +7,27 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "tutorial"
+BOT_NAME = "playweb"
 
-SPIDER_MODULES = ["tutorial.spiders"]
-NEWSPIDER_MODULE = "tutorial.spiders"
+SPIDER_MODULES = ["playweb.spiders"]
+NEWSPIDER_MODULE = "playweb.spiders"
 
+DOWNLOAD_HANDLERS = {
+    "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+    "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+}
+
+TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+
+PLAYWRIGHT_BROWSER_TYPE = "chromium"
+
+PLAYWRIGHT_LAUNCH_OPTIONS = {
+    "headless": False,
+    "timeout": 30 * 1000,
+}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "tutorial (+http://www.yourdomain.com)"
+#USER_AGENT = "playweb (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -45,13 +58,13 @@ ROBOTSTXT_OBEY = False
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    "tutorial.middlewares.TutorialSpiderMiddleware": 543,
+#    "playweb.middlewares.PlaywebSpiderMiddleware": 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    "tutorial.middlewares.TutorialDownloaderMiddleware": 543,
+#    "playweb.middlewares.PlaywebDownloaderMiddleware": 543,
 #}
 
 # Enable or disable extensions
@@ -62,12 +75,9 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-   "tutorial.pipelines.TextPipeline": 300,
-   "tutorial.pipelines.MongoPipeline": 400,
-}
-MONGO_URI='localhost'
-MONGO_DB='tutorial'
+#ITEM_PIPELINES = {
+#    "playweb.pipelines.PlaywebPipeline": 300,
+#}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -94,15 +104,3 @@ MONGO_DB='tutorial'
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
-
-DOWNLOAD_HANDLERS = {
-    "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
-    "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
-}
-
-TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
-
-PLAYWRIGHT_LAUNCH_OPTIONS = {
-    "headless": False,
-    "timeout": 30 * 1000,
-}

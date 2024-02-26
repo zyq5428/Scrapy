@@ -7,6 +7,10 @@ class QuotesSpider(scrapy.Spider):
     allowed_domains = ["quotes.toscrape.com"]
     start_urls = ["http://quotes.toscrape.com/"]
 
+    def start_requests(self):
+        url = "https://quotes.toscrape.com/js/"
+        yield scrapy.Request(url, meta={'playwright': True})
+
     def parse(self, response):
         quotes = response.css('.quote')
         for quote in quotes:
@@ -18,4 +22,4 @@ class QuotesSpider(scrapy.Spider):
 
         next = response.css('.pager .next a::attr("href")').extract_first()
         url = response.urljoin(next)
-        yield scrapy.Request(url=url, callback=self.parse)
+        yield scrapy.Request(url=url, meta={'playwright': True}, callback=self.parse)
