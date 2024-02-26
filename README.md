@@ -44,3 +44,8 @@ tutorial         # 项目的模块，引入的时候需要从这里引入
 运行爬虫：
     scrapy crawl quotes
 
+## Scrapy-playwright插件的使用
+
+**注意:** Scrapy-playwright插件只能在Linux下正常运行，我亲自试了下，在Windows下会出现很多异常错误，无法解决。
+
+ [ Scrapy-playwright入门指引](https://scrapeops.io/python-scrapy-playbook/scrapy-playwright/)。
