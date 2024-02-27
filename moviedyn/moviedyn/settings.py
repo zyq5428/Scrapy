@@ -19,6 +19,20 @@ DOWNLOAD_HANDLERS = {
 
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 
+PLAYWRIGHT_BROWSER_TYPE = "chromium"
+
+PLAYWRIGHT_LAUNCH_OPTIONS = {
+    "headless": False,
+    "timeout": 30 * 1000,
+}
+
+MAX_PAGE = 10
+
+MONGO_URI = 'localhost'
+MONGO_DB = 'movie100'
+
+IMAGES_STORE = './images'
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "moviedyn (+http://www.yourdomain.com)"
 
@@ -68,9 +82,11 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "moviedyn.pipelines.MoviedynPipeline": 300,
-#}
+ITEM_PIPELINES = {
+   "moviedyn.pipelines.MoviedynPipeline": 300,
+   "moviedyn.pipelines.ImagePipeline": 301,
+   "moviedyn.pipelines.MongoPipeline": 302,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
