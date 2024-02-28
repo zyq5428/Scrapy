@@ -11,7 +11,11 @@ class MoviedynItem(scrapy.Item):
     # name = scrapy.Field()
     collection = 'moviedyn'
 
+    cover = scrapy.Field()
     name = scrapy.Field()
+    categories = scrapy.Field()
+    published_at = scrapy.Field()
+    drama = scrapy.Field()
+    score = scrapy.Field()
     url = scrapy.Field()
-    img = scrapy.Field()
     image_paths = scrapy.Field()

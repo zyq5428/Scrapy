@@ -41,7 +41,7 @@ class MongoPipeline:
     
 class ImagePipeline(ImagesPipeline):
     def get_media_requests(self, item, info):
-        yield Request(item['img'])
+        yield Request(item['cover'])
 
     def item_completed(self, results, item, info):
         image_paths = [x['path'] for ok, x in results if ok]
