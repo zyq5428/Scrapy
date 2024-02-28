@@ -26,6 +26,14 @@ PLAYWRIGHT_LAUNCH_OPTIONS = {
     "timeout": 30 * 1000,
 }
 
+def should_abort_request(request):
+    return (
+        request.resource_type == "image"
+        or ".jpg" in request.url
+    )
+
+PLAYWRIGHT_ABORT_REQUEST = should_abort_request
+
 MAX_PAGE = 10
 
 MONGO_URI = 'localhost'
