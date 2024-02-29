@@ -21,10 +21,12 @@ TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 
 PLAYWRIGHT_BROWSER_TYPE = "chromium"
 
-PLAYWRIGHT_LAUNCH_OPTIONS = {
-    "headless": False,
-    "timeout": 30 * 1000,
-}
+# PLAYWRIGHT_LAUNCH_OPTIONS = {
+#     "headless": False,
+#     "timeout": 30 * 1000,
+# }
+
+PLAYWRIGHT_MAX_PAGES_PER_CONTEXT = 10
 
 def should_abort_request(request):
     return (
@@ -121,3 +123,6 @@ ITEM_PIPELINES = {
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+# Log setting
+LOG_LEVEL = "INFO"

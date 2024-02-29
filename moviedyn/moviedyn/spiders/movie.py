@@ -12,13 +12,12 @@ class MovieSpider(scrapy.Spider):
     def start_requests(self):
         for page in range(1, self.settings.get('MAX_PAGE') + 1):
             url = f'{BASE_URL}/page/{page}'
-            context_name = 'context' + str(page)
             yield scrapy.Request(
                 url = url,
                 callback = self.parse_index,
                 meta = {
                     'playwright': True,
-                    'playwright_context': context_name,
+                    'playwright_context': 'first',
                     'playwright_include_page': True,
                     'playwright_page_methods': [
                         PageMethod("wait_for_selector", ".el-card .name"),
@@ -29,29 +28,22 @@ class MovieSpider(scrapy.Spider):
 
     async def parse_index(self, response):
         page = response.meta['playwright_page']
-        title = re.search(r'page\/(\d*)', response.url).group(1)
-        screenshot = await page.screenshot(path="./image/" + title + ".png", full_page=True)
+        # title = re.search(r'page\/(\d*)', response.url).group(1)
+        # screenshot = await page.screenshot(path="./image/" + title + ".png", full_page=True)
         movies = response.css('.el-col .el-card')
         for movie in movies:
-            # item = MoviedynItem()
-            # item['name'] = movie.css('.el-row .m-b-sm::text').extract_first()
-            # href = movie.css('.el-col-xs-8 a::attr("href")').extract_first()
-            # item['url'] = urljoin(BASE_URL, href)
-            # item['img'] = movie.css('.cover::attr("src")').extract_first()
-            # self.logger.debug('item: %s' % item)
-            # yield item
             href = movie.css('.name::attr("href")').extract_first()
             url = urljoin(BASE_URL, href)
-            self.logger.debug('detail url: %s' % url)
+            self.logger.info('detail url: %s' % url)
             yield scrapy.Request(
                 url = url,
                 callback = self.parse_detail,
                 meta = {
                     'playwright': True,
-                    'playwright_context': response.meta['playwright_context'],
+                    'playwright_context': 'second',
                     'playwright_include_page': True,
                     'playwright_page_methods': [
-                        PageMethod("wait_for_selector", ".el-card .name"),
+                        PageMethod("wait_for_selector", "img.cover"),
                     ]
                 },
                 errback = self.errback_close_page,
@@ -78,5 +70,5 @@ class MovieSpider(scrapy.Spider):
         yield item
 
     async def errback_close_page(self, failure):
-        page = failure.requests.meta['playwright_page']
+        page = failure.request.meta['playwright_page']
         await page.close()

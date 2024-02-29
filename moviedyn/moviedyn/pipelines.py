@@ -50,7 +50,7 @@ class ImagePipeline(ImagesPipeline):
         item['image_paths'] = image_paths
         return item
     
-    def file_path(self, request, response=None, info=None):
+    def file_path(self, request, response=None, info=None, *, item=None):
         url = request.url
         file_name = re.search(r'(.*jpg)', url.split('/')[-1]).group(0)
         return file_name
