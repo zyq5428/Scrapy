@@ -12,6 +12,7 @@ BOT_NAME = "moviedyn"
 SPIDER_MODULES = ["moviedyn.spiders"]
 NEWSPIDER_MODULE = "moviedyn.spiders"
 
+# scrapy-playwright setting
 DOWNLOAD_HANDLERS = {
     "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
     "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
@@ -21,10 +22,10 @@ TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 
 PLAYWRIGHT_BROWSER_TYPE = "chromium"
 
-# PLAYWRIGHT_LAUNCH_OPTIONS = {
-#     "headless": False,
-#     "timeout": 30 * 1000,
-# }
+PLAYWRIGHT_LAUNCH_OPTIONS = {
+    "headless": False,
+    "timeout": 30 * 1000,
+}
 
 PLAYWRIGHT_MAX_PAGES_PER_CONTEXT = 10
 
@@ -36,6 +37,19 @@ def should_abort_request(request):
 
 PLAYWRIGHT_ABORT_REQUEST = should_abort_request
 
+# scrapy-redis setting
+# Enables scheduling storing requests queue in redis.
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+# Ensure all spiders share same duplicates filter through redis.
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+# Don't cleanup redis queues, allows to pause/resume crawls.
+SCHEDULER_PERSIST = True
+# Specify the host and port to use when connecting to Redis (optional).
+#REDIS_HOST = 'localhost'
+#REDIS_PORT = 6379
+REDIS_URL = 'redis://localhost:6379'
+
+# user spider setting
 MAX_PAGE = 10
 
 MONGO_URI = 'localhost'

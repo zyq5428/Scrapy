@@ -34,7 +34,7 @@ class MovieSpider(scrapy.Spider):
         for movie in movies:
             href = movie.css('.name::attr("href")').extract_first()
             url = urljoin(BASE_URL, href)
-            self.logger.info('detail url: %s' % url)
+            self.logger.debug('Get detail url: %s' % url)
             yield scrapy.Request(
                 url = url,
                 callback = self.parse_detail,
@@ -58,7 +58,7 @@ class MovieSpider(scrapy.Spider):
         item['cover'] = response.css('img.cover::attr("src")').extract_first()
         item['name'] = response.css('a > h2::text').extract_first()
         item['categories'] = response.css('.categories button span::text').re('(.*)\\n')
-        item['published_at'] = response.css('.info span::text').re('(.*) 上映')[0]
+        item['published_at'] = response.css('.info  span::text').re('(.*) 上映')[0]
         # published_at = response.css('.info span:contains("上映")::text').extract_first()
         # item['published_at'] = re.search(r'\d{4}-\d{2}-\d{2}', published_at).group(0) \
         #     if published_at and re.search(r'\d{4}-\d{2}-\d{2}', published_at) else None

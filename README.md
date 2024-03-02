@@ -49,3 +49,9 @@ tutorial         # 项目的模块，引入的时候需要从这里引入
 **注意:** Scrapy-playwright插件只能在Linux下正常运行，我亲自试了下，在Windows下会出现很多异常错误，无法解决。
 
  [ Scrapy-playwright入门指引](https://scrapeops.io/python-scrapy-playbook/scrapy-playwright/)。
+
+ ## Scrapy-Redis 分布式实现
+
+    安装redis、redis-py、Scrapy-Redis，其中Scrapy-Redis采用From GitHub的安装方式，如果出现依赖库检测不到，可以忽略尝试下能不能用，能用就不管。
+
+    Redis建议使用Another Redis Desktop Manager作为GUI管理工具，采用sudo snap install another-redis-desktop-manager方式安装。
