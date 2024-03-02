@@ -44,11 +44,17 @@ tutorial         # 项目的模块，引入的时候需要从这里引入
 运行爬虫：
     scrapy crawl quotes
 
+## scrapy shell的使用
+
+ [ scrapy shell入门指引](https://docs.scrapy.org/en/latest/topics/shell.html#)
+
+    运行多行命令（如for循环），进入多行使用shift+enter，执行命令使用alt+enter。
+
 ## Scrapy-playwright插件的使用
 
 **注意:** Scrapy-playwright插件只能在Linux下正常运行，我亲自试了下，在Windows下会出现很多异常错误，无法解决。
 
- [ Scrapy-playwright入门指引](https://scrapeops.io/python-scrapy-playbook/scrapy-playwright/)。
+ [ Scrapy-playwright入门指引](https://scrapeops.io/python-scrapy-playbook/scrapy-playwright/)
 
  ## Scrapy-Redis 分布式实现
 
