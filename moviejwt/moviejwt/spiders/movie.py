@@ -1,10 +1,12 @@
 import scrapy
 import re
+import json
 from urllib.parse import urljoin
 # from moviedyn.items import MoviedynItem
 from scrapy_playwright.page import PageMethod
 
 BASE_URL = 'https://login3.scrape.center/'
+LOGIN_URL = 'https://login3.scrape.center/login'
 USERNAME = 'admin'
 PASSWORD = 'admin'
 COOKIE_FILE = 'cookies.json'
@@ -14,11 +16,11 @@ class MovieSpider(scrapy.Spider):
 
     def start_requests(self):
         yield scrapy.Request(
-            url = BASE_URL,
+            url = LOGIN_URL,
             callback = self.simulate_login,
             meta = {
                 'playwright': True,
-                'playwright_context': 'first',
+                'playwright_context': 'login',
                 'playwright_include_page': True,
                 'playwright_page_methods': [
                     PageMethod("wait_for_selector", "input[type='password']"),
@@ -30,7 +32,6 @@ class MovieSpider(scrapy.Spider):
     async def simulate_login(self, response):
         page = response.meta['playwright_page']
         title = re.search(r'center\/(.*)', response.url).group(1)
-        screenshot = await page.screenshot(path="./image/" + title + ".png", full_page=True)
         try:
             self.logger.info('Start logging in %s...', response.url)
             await page.locator('input[type="text"]').fill(USERNAME)
@@ -39,44 +40,79 @@ class MovieSpider(scrapy.Spider):
             await page.wait_for_load_state("networkidle")
             username = page.get_by_text(USERNAME)
             await username.wait_for()
-            self.logger.info('Current url is %s...', page.url)
-            screenshot = await page.screenshot(path="./image/" + title + "_logined.png", full_page=True)
             # In order to obtain the token of JWT
             await page.goto(BASE_URL)
             await page.wait_for_load_state("networkidle")
-            self.logger.info('Current url is %s...', page.url)
             # save storage_state to file
             storage = await page.context.storage_state(path=COOKIE_FILE)
-            self.logger.info('Cookies is saved to %s: \n %s', COOKIE_FILE, storage)
+            self.logger.debug('Cookies is saved to %s: \n %s', COOKIE_FILE, storage)
             screenshot = await page.screenshot(path="./image/" + title + "_succeed.png", full_page=True)
         except Exception as e:
             self.logger.error('error occurred while scraping %s', url, exc_info=True)
+
+        yield scrapy.Request(
+            url = BASE_URL,
+            callback = self.scrape_index,
+            meta = {
+                'playwright': True,
+                'playwright_context': 'login',
+                'playwright_page_methods': [
+                    PageMethod("wait_for_selector", ".el-card__body"),
+                ]
+            },
+            errback = self.errback_close_page,
+        )
         await page.close()
-        await page.context.close()
-        self.logger.info('The login page and context are closed')
+        self.logger.info('The login page are closed')
+
+    async def scrape_index(self, response):
+        storage_state = {}
+        with open('cookies.json') as f:
+            storage_state = json.load(f)
+        for page in range(1, self.settings.get('MAX_PAGE') + 1):
+            index_url = f'{BASE_URL}page/{page}'
+            self.logger.debug('Get detail url: %s', index_url)
+            yield scrapy.Request(
+                url = index_url,
+                callback = self.parse_index,
+                meta = {
+                    'playwright': True,
+                    'playwright_context': 'index',
+                    "playwright_context_kwargs": {
+                        "storage_state": storage_state,
+                    },
+                    'playwright_include_page': True,
+                    'playwright_page_methods': [
+                        PageMethod("wait_for_selector", ".el-card__body"),
+                    ]
+                },
+                errback = self.errback_close_page,
+            )
 
     async def parse_index(self, response):
         page = response.meta['playwright_page']
-        title = re.search(r'center\/(.*)', response.url).group(1)
-        screenshot = await page.screenshot(path="./image/" + title + ".png", full_page=True)
-        # movies = response.css('.el-col .el-card')
-        # for movie in movies:
-        #     href = movie.css('.name::attr("href")').extract_first()
-        #     url = urljoin(BASE_URL, href)
-        #     self.logger.debug('Get detail url: %s' % url)
-        #     yield scrapy.Request(
-        #         url = url,
-        #         callback = self.parse_detail,
-        #         meta = {
-        #             'playwright': True,
-        #             'playwright_context': 'second',
-        #             'playwright_include_page': True,
-        #             'playwright_page_methods': [
-        #                 PageMethod("wait_for_selector", "img.cover"),
-        #             ]
-        #         },
-        #         errback = self.errback_close_page,
-        #     )
+        books = response.css('.el-row .el-col')
+        print(books)
+        for book in books:
+            href = book.css('.name::attr("href")').extract_first()
+            url = urljoin(BASE_URL, href)
+            self.logger.info('Get detail url: %s', url)
+            # yield scrapy.Request(
+            #     url = url,
+            #     callback = self.parse_detail,
+            #     meta = {
+            #         'playwright': True,
+            #         'playwright_context': 'detail',
+            #         "playwright_context_kwargs": {
+            #             "storage_state": storage_state,
+            #         },
+            #         'playwright_include_page': True,
+            #         'playwright_page_methods': [
+            #             PageMethod("wait_for_selector", "img.cover"),
+            #         ]
+            #     },
+            #     errback = self.errback_close_page,
+            # )
         await page.close()
 
     # async def parse_detail(self, response):
