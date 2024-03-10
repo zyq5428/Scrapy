@@ -9,4 +9,15 @@ import scrapy
 class MoviejwtItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    collection = 'bookjwt'
+
+    score = scrapy.Field()
+    name = scrapy.Field()
+    tags = scrapy.Field()
+    price = scrapy.Field()
+    authors = scrapy.Field()
+    published_at = scrapy.Field()
+    isbm = scrapy.Field()
+    cover = scrapy.Field()
+    comments = scrapy.Field()
+    image_paths = scrapy.Field()

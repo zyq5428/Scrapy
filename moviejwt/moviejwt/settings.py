@@ -15,6 +15,12 @@ NEWSPIDER_MODULE = "moviejwt.spiders"
 # Log setting
 LOG_LEVEL = "INFO"
 
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.42"
+
+DEFAULT_REQUEST_HEADERS = {
+    "User-Agent": USER_AGENT,
+}
+
 # scrapy-playwright setting
 DOWNLOAD_HANDLERS = {
     "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
@@ -29,6 +35,10 @@ PLAYWRIGHT_LAUNCH_OPTIONS = {
     "headless": False,
     "timeout": 30 * 1000,
 }
+
+# PLAYWRIGHT_PROCESS_REQUEST_HEADERS = {
+#     "User-Agent": USER_AGENT,
+# }
 
 PLAYWRIGHT_MAX_PAGES_PER_CONTEXT = 10
 
@@ -56,7 +66,7 @@ PLAYWRIGHT_ABORT_REQUEST = should_abort_request
 MAX_PAGE = 10
 
 MONGO_URI = 'localhost'
-MONGO_DB = 'movie100'
+MONGO_DB = 'book180'
 
 IMAGES_STORE = './images'
 
@@ -109,9 +119,11 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "moviejwt.pipelines.MoviejwtPipeline": 300,
-#}
+ITEM_PIPELINES = {
+   "moviejwt.pipelines.MoviejwtPipeline": 300,
+   "moviejwt.pipelines.ImagePipeline": 301,
+   "moviejwt.pipelines.MongoPipeline": 302,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
