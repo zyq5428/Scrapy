@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s: %(m
 
 # Setting
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36'
-BASE_URL = 'https://antispider1.scrape.center/'
+BASE_URL = 'https://antispider2.scrape.center/'
 LOGIN_URL = 'https://login3.scrape.center/login'
 DETAIL_URL = 'https://login3.scrape.center/detail/1491325'
 USERNAME = 'admin'
