@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s: %(m
 
 # Setting
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36'
-BASE_URL = 'https://login3.scrape.center/'
+BASE_URL = 'https://antispider1.scrape.center/'
 LOGIN_URL = 'https://login3.scrape.center/login'
 DETAIL_URL = 'https://login3.scrape.center/detail/1491325'
 USERNAME = 'admin'
@@ -28,6 +28,11 @@ DETAIL_FILE_NAME = 'book_detail.html'
 返回值: page_obj.content() (页面代码源文档)
 '''
 async def scrape_api(page_obj, url):
+    # Remove webdriver detection
+    js = """
+    Object.defineProperties(navigator, {webdriver:{get:()=>undefined}});
+    """
+    await page_obj.add_init_script(js)
     # Images are not allowed to be loaded
     await page_obj.route(re.compile(r"(\.png)|(\.jpg)"), lambda route: route.abort())
 
@@ -74,7 +79,7 @@ async def simulate_login(url):
             logging.error('error occurred while scraping %s', url, exc_info=True)
 
 async def main():
-    await simulate_login(BASE_URL)
+    # await simulate_login(BASE_URL)
 
     async with async_playwright() as playwright:
         chromium = playwright.chromium
@@ -85,9 +90,9 @@ async def main():
         html = await scrape_api(page_obj, BASE_URL)
         with open(INDEX_FILE_NAME, 'w', encoding='utf-8') as f:
             f.write(html)
-        html = await scrape_api(page_obj, DETAIL_URL)
-        with open(DETAIL_FILE_NAME, 'w', encoding='utf-8') as f:
-            f.write(html)
+        # html = await scrape_api(page_obj, DETAIL_URL)
+        # with open(DETAIL_FILE_NAME, 'w', encoding='utf-8') as f:
+        #     f.write(html)
         await page_obj.close()
         await context.close()
         await browser.close()
