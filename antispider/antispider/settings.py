@@ -12,7 +12,63 @@ BOT_NAME = "antispider"
 SPIDER_MODULES = ["antispider.spiders"]
 NEWSPIDER_MODULE = "antispider.spiders"
 
+# Log setting
+LOG_LEVEL = "INFO"
+
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.42"
+
+DEFAULT_REQUEST_HEADERS = {
+    "User-Agent": USER_AGENT,
+}
+
+# scrapy-playwright setting
+DOWNLOAD_HANDLERS = {
+    "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+    "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+}
+
+TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+
+PLAYWRIGHT_BROWSER_TYPE = "chromium"
+
+PLAYWRIGHT_LAUNCH_OPTIONS = {
+    "headless": False,
+    "timeout": 30 * 1000,
+}
+
+# PLAYWRIGHT_PROCESS_REQUEST_HEADERS = {
+#     "User-Agent": USER_AGENT,
+# }
+
+PLAYWRIGHT_MAX_PAGES_PER_CONTEXT = 10
+
+def should_abort_request(request):
+    return (
+        request.resource_type == "image"
+        or ".jpg" in request.url
+    )
+
+PLAYWRIGHT_ABORT_REQUEST = should_abort_request
+
+# scrapy-redis setting
+# Enables scheduling storing requests queue in redis.
+# SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+# Ensure all spiders share same duplicates filter through redis.
+# DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+# Don't cleanup redis queues, allows to pause/resume crawls.
+# SCHEDULER_PERSIST = True
+# Specify the host and port to use when connecting to Redis (optional).
+#REDIS_HOST = 'localhost'
+#REDIS_PORT = 6379
+# REDIS_URL = 'redis://localhost:6379'
+
+# user spider setting
 MAX_PAGE = 10
+
+MONGO_URI = 'localhost'
+MONGO_DB = 'book180'
+
+IMAGES_STORE = './images'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "antispider (+http://www.yourdomain.com)"
@@ -63,9 +119,11 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "antispider.pipelines.AntispiderPipeline": 300,
-#}
+ITEM_PIPELINES = {
+   "antispider.pipelines.AntispiderPipeline": 300,
+   "antispider.pipelines.ImagePipeline": 301,
+   "antispider.pipelines.MongoPipeline": 302,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
